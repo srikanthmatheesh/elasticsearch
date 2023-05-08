@@ -1,0 +1,30 @@
+version: '3.5'
+services:
+
+  # Elastic Service
+  elasticsearch:
+    container_name: es-container
+    restart: unless-stopped
+    tty: true
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
+    volumes:
+      - ./esdata:/usr/share/elasticsearch/data
+    environment:
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=123456
+      - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+      - "cluster.routing.allocation.disk.threshold_enabled=false"
+    networks:
+      - app-network
+    ports:
+      - 9200:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+# Docker Networks
+networks:
+  app-network:
+  driver: bridge
